@@ -4,31 +4,14 @@ import (
 	"log"
 	"net/http"
 	"restapi/handlers"
-	"restapi/models"
-	"restapi/storage"
+	"restapi/storage/database"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	storage.Books = append(storage.Books, models.Book{
-		ID:    1,
-		Isbn:  "438227",
-		Title: "Book One",
-		Author: &models.Author{
-			Firstname: "John",
-			Lastname:  "Deer",
-		},
-	})
-	storage.Books = append(storage.Books, models.Book{
-		ID:    2,
-		Isbn:  "454555",
-		Title: "Book two",
-		Author: &models.Author{
-			Firstname: "Ramazan",
-			Lastname:  "Bolatkhan",
-		},
-	})
+	//connecting to database
+	database.Connectdb()
 
 	//Init router
 	r := mux.NewRouter()
