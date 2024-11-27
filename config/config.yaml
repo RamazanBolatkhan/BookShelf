@@ -2,7 +2,7 @@ database:
   host: "localhost"
   port: 5432
   user: "postgres"
-  password: ""
+  password: "011104"
   name: "BookShelf"
   sslmode: "disable"
   timezone: "America/Los_Angeles"

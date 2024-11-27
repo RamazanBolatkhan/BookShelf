@@ -10,6 +10,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Get all books
+// @Summary Get all Books
+// @Description Getting all the books stored in the "Shelf"
+// @Tags books
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Book
+// @Router /books [get]
 func GetBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var books []models.Book
@@ -19,14 +27,26 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(books)
 }
 
+// Get book by id
+// @Summary Get Book by id
+// @Description Getting certain book by ID
+// @Tags book
+// @Accept json
+// @Param  id path int  true  "Book ID"
+// @Produce json
+// @Success 200 {book} models.Book
+// @Router /books/{id} [get]
 func GetBookByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r)
-	id := params["id"]
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		http.Error(w, "Ivalid id format", http.StatusBadRequest)
+	}
 	var book models.Book
 
-	if err := database.DB.First(&book, "id = ?", id).Error; err != nil {
+	if err := database.DB.First(&book, id).Error; err != nil {
 		http.Error(w, "Book not found", http.StatusNotFound)
 		return
 	}
@@ -35,6 +55,17 @@ func GetBookByID(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// PostBook godoc
+// @Summary Create a new book
+// @Description Add a new book to the database
+// @Tags books
+// @Accept  json
+// @Produce  json
+// @Param book body models.Book true "Book Data"
+// @Success 201 {object} models.Book
+// @Failure 400 {string} string "Invalid request payload"
+// @Failure 500 {string} string "Failed to create book"
+// @Router /books [post]
 func PostBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var book models.Book
@@ -51,6 +82,18 @@ func PostBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(book)
 }
 
+// UpdateBook
+// @Summary Update Book
+// @Description Update a book in the database
+// @Tags books
+// @Accept  json
+// @Produce  json
+// @Param book body models.Book true "Book Data"
+// @Param id path int true "Book ID"
+// @Success 201 {object} models.Book
+// @Failure 400 {string} string "Invalid request payload"
+// @Failure 500 {string} string "Failed to update book"
+// @Router /books/{id} [put]
 func UpdateBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -89,6 +132,17 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// DeleteBook
+// @Summary Delete Book
+// @Description Delete a book in the database
+// @Tags books
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Book ID"
+// @Success 201 {object} models.Book
+// @Failure 400 {string} string "Invalid request payload"
+// @Failure 500 {string} string "Failed to delete book"
+// @Router /books/{id} [delete]
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
